@@ -21,7 +21,10 @@ export default class App extends Component {
     })
 
     this.setState(prevState => {
-      return { videos: res.data.items }
+      return {
+        videos: res.data.items,
+        selectedVideo: null
+      }
     })
   }
 
