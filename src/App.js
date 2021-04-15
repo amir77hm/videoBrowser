@@ -1,25 +1,44 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { Component } from 'react';
+import SearchBar from "./components/SearchBar";
+import Youtube from "./components/api/youtube";
+import VideoList from "./components/VideoList";
+import VideoDetails from "./components/VideoDetails";
+import "./style.css";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+export default class App extends Component {
+
+  state = {
+    videos: [],
+    selectedVideo: null
+  }
+
+  onTermSubmit = async term => {
+
+    const res = await Youtube.get('/search', {
+      params: {
+        q: term
+      }
+    })
+
+    this.setState(prevState => {
+      return { videos: res.data.items }
+    })
+  }
+
+  onSelectedVideo = (video) => {
+    this.setState(prevState => {
+      return { selectedVideo: video }
+    })
+  }
+
+
+  render() {
+    return (
+      <div className='App'>
+        <SearchBar onFormSubmit={this.onTermSubmit} />
+        <VideoDetails video={this.state.selectedVideo ? this.state.selectedVideo : ''} />
+        <VideoList videos={this.state.videos} onSelectedVideo={this.onSelectedVideo} />
+      </div>
+    )
+  }
 }
-
-export default App;
